@@ -145,7 +145,7 @@ target_include_directories(muse_simulator PRIVATE "\${FRAME_PLAYER}/include")
   patch('esp32/partitions_muse.csv', s => s + '\n# Immutable core pack, separate from both application OTA slots.\naipet, data, 0x42, 0x830000, 0x300000,\n');
   patch('esp32/CMakeLists.txt', s => s + `
 if(CONFIG_HOMEHUB_OTA_ENABLED)
-    message(FATAL_ERROR "AI Pets requires Muse OTA disabled; use npm run configure:firmware to disable it.")
+    message(FATAL_ERROR "AI Pets requires Muse OTA disabled. Set CONFIG_HOMEHUB_OTA_ENABLED=n in build/firmware/sdkconfig and rebuild.")
 endif()
 esptool_py_flash_to_partition(flash "aipet" "\${CMAKE_CURRENT_LIST_DIR}/../pet.aipetframes")
 `);

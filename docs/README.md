@@ -57,6 +57,9 @@ the adapter.
 `configure:firmware` selects the same build directory/configuration as
 `build:firmware`. A CMake guard rejects an existing configuration with Muse OTA
 enabled, because saved settings otherwise override defaults.
+If that guard fires before the configuration menu opens, set only
+`CONFIG_HOMEHUB_OTA_ENABLED=n` in the ignored `build/firmware/sdkconfig` and
+rebuild; preserve the remaining settings and credentials.
 
 `build/sdk/receipt.json` records pins, pack identity/dimensions/hash/bytes, target
 and partition, with `hardwareVerified: false`. Keep it with generated firmware
