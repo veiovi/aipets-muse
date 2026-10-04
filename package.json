@@ -1,0 +1,17 @@
+{
+  "name": "aipets-muse",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "prepare:muse": "node tools/prepare.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "build:simulator": "node tools/build.mjs simulator",
+    "build:firmware": "node tools/build.mjs firmware",
+    "configure:firmware": "node tools/build.mjs configure"
+  },
+  "dependencies": {
+    "@aipet/frame-pack": "file:vendor/frame-pack-0.3.0-sprite.3.tgz"
+  }
+}
