@@ -1,0 +1,3 @@
+[submodule "upstream/muse"]
+	path = upstream/muse
+	url = https://github.com/facebookincubator/muse-gadget-sdk.git

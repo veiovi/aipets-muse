@@ -1,0 +1,22 @@
+name: validation
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  host-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm test
+      - run: npm run prepare:muse -- build/test-packs/240.aipetframes
+      - run: npm run build:simulator
+      - run: ctest --test-dir build/simulator --output-on-failure
+        env:
+          AIPET_PACK: ${{ github.workspace }}/build/sdk/pet.aipetframes
