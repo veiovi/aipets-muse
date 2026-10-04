@@ -22,7 +22,7 @@ AIPET_PACK="$PWD/build/sdk/pet.aipetframes" ./build/simulator/muse_simulator
 ```
 
 The simulator runs Muse's production UI. Use its
-[keyboard controls](upstream/muse/esp32/simulator/README.md) to change states,
+[keyboard controls](https://github.com/facebookincubator/muse-gadget-sdk/blob/693cde9a884ad1edc87251b9f8944815f8de4809/esp32/simulator/README.md) to change states,
 audio level and touch/happiness. It is a native desktop preview, not a website.
 
 Preparation validates with the canonical C/WASM player, verifies pinned runtime
@@ -80,7 +80,8 @@ See [integration details](docs/README.md).
 Muse source is Apache-2.0; its default Jollybot artwork is excluded from that
 license and is not our avatar. The compiler/runtime archive is the MIT-licensed
 `sprite-aipets` distribution; miniz notices remain inside it. See
-[compiler license](vendor/LICENSE.frame-pack) and [Muse license](upstream/muse/LICENSE).
+[compiler license](vendor/LICENSE.frame-pack) and
+[Muse license](https://github.com/facebookincubator/muse-gadget-sdk/blob/693cde9a884ad1edc87251b9f8944815f8de4809/LICENSE).
 
 Muse service access separately follows its
 [SDK token terms](https://gadgets.muse.ai/sdk-terms), including personal,
