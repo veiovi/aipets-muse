@@ -249,8 +249,74 @@ static void check_host_load(const char *path, bool succeeds)
     assert((WEXITSTATUS(status) == 0) == succeeds);
 }
 
+static void save_pixels(const fixture_t *f, const char *directory, unsigned stage)
+{
+    char path[1024];
+    assert(snprintf(path, sizeof(path), "%s/stage-%u.ppm", directory, stage) < (int)sizeof(path));
+    FILE *file = fopen(path, "wb");
+    assert(file);
+    fprintf(file, "P6\n%u %u\n255\n", f->width, f->width);
+    uint16_t pixels[FP_MAX_PIXELS];
+    muse_pixel_scale(pixels, (int)f->width, 0, (int)f->width - 1, 0, (int)f->width - 1);
+    for (unsigned i = 0; i < f->width * f->width; i++) {
+        uint16_t p = pixels[i];
+        unsigned char rgb[] = {
+            (unsigned char)(((p >> 11) & 31) * 255 / 31),
+            (unsigned char)(((p >> 5) & 63) * 255 / 63),
+            (unsigned char)((p & 31) * 255 / 31)
+        };
+        assert(fwrite(rgb, 1, 3, file) == 3);
+    }
+    assert(fclose(file) == 0);
+}
+
+static void check_speech(fixture_t *f, unsigned stages, const char *directory)
+{
+    assert(stages >= 2 && stages <= 8);
+    unsigned visited = 0;
+    /* Identical seeds and tick counts isolate mouth changes from blink/pose
+     * timing. Compare actual strip pixels, not only the reference state. */
+    for (unsigned level = 0; level <= 100; level++) {
+        reset(f);
+        for (unsigned i = 0; i < 6; i++) {
+            muse_pose_t pose = {.mode = MUSE_MODE_SPEAKING, .t = i * 0.033f,
+                .level = level / 100.0f};
+            step(f, pose, FP_SYS_SPEAKING, (uint8_t)level, false, 1);
+        }
+        unsigned stage = fp_debug_mouth_stage(f->reference);
+        assert(stage < stages);
+        if (!(visited & (1u << stage))) {
+            save_pixels(f, directory, stage);
+        }
+        visited |= 1u << stage;
+        if (level == 0) {
+            assert(stage == 0);
+        }
+        if (level == 100) {
+            assert(stage == stages - 1);
+        }
+    }
+    assert(visited == (1u << stages) - 1);
+    /* Silence must close the mouth even while the reply remains SPEAKING. */
+    for (unsigned i = 6; i < 26; i++) {
+        muse_pose_t pose = {.mode = MUSE_MODE_SPEAKING, .t = i * 0.033f};
+        step(f, pose, FP_SYS_SPEAKING, 0, false, 1);
+    }
+    assert(fp_debug_mouth_stage(f->reference) == 0);
+    save_pixels(f, directory, stages);
+    puts("speech passed: every mouth stage reached, strip pixels match, silence closes");
+}
+
 int main(int argc, char **argv)
 {
+    if (argc == 6 && strcmp(argv[1], "--speech") == 0) {
+        fixture_t f = open_fixture(argv[2], (unsigned)atoi(argv[3]));
+        check_speech(&f, (unsigned)atoi(argv[4]), argv[5]);
+        aipet_avatar_shutdown();
+        free(f.arena);
+        free(f.bytes);
+        return 0;
+    }
     if (argc != 3) {
         fprintf(stderr, "usage: %s PACK120 PACK240\n", argv[0]);
         return 2;

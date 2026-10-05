@@ -73,6 +73,15 @@ modes/precedence, audio levels, touch edges, 33 ms timing under 40 ms refresh,
 bounded resume, scaling/stride boundaries, malformed inputs and startup failures.
 Preparation tests check actual artifacts and rejection behavior.
 
+The six curated packs in `characters/catalog.json` are hash-checked and exercised
+through the real C adapter under ASan/UBSan. Each authored speaking pose must have
+distinct mouth drawings. For every level from 0 through 100, Muse strip pixels
+must equal the canonical player, every declared mouth stage must be reached,
+and the actual mouth-region pixels must differ between stages. Silence while
+still in SPEAKING must return to the exact closed mouth. The test saves PPM
+frames in `build/mouth-checks/`; `characters/mouth-checks.png` shows those pixels.
+This proves the imported packages and adapter, not a live TTS service.
+
 The full simulator compiles production Muse UI with the adapter; upstream
 headless tests check deterministic scenes. Firmware must compile on ESP-IDF6.0.1
 with asset offset and disabled OTA verified. These checks do not prove device

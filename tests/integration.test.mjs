@@ -1,11 +1,13 @@
 import assert from 'node:assert/strict';
 import {execFileSync, spawnSync} from 'node:child_process';
-import {mkdtempSync, readFileSync, writeFileSync} from 'node:fs';
+import {mkdirSync, mkdtempSync, readFileSync, writeFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import test from 'node:test';
 import {prepare, root} from '../tools/prepare.mjs';
 import {writeFixtures} from './fixtures.mjs';
+import {parseFramePack} from '@aipet/frame-pack';
 
 test('Muse adapter preserves canonical pixels, input semantics and timing', () => {
   const packs = writeFixtures(join(root, 'build/test-packs'));
@@ -23,6 +25,48 @@ test('Muse adapter preserves canonical pixels, input semantics and timing', () =
     env: {...process.env, ASAN_OPTIONS: `detect_leaks=${process.platform === 'darwin' ? 0 : 1}:halt_on_error=1`}});
   assert.equal(result.status, 0, result.stdout + result.stderr);
   console.log(result.stdout.trim());
+  const catalog = JSON.parse(readFileSync(join(root, 'characters/catalog.json')));
+  for (const character of catalog.characters) {
+    const path = join(root, 'characters', character.file);
+    const bytes = readFileSync(path);
+    const hash = data => createHash('sha256').update(data).digest('hex');
+    assert.equal(hash(bytes), character.sha256);
+    assert.equal(bytes.length, character.bytes);
+    const pack = parseFramePack(bytes);
+    assert.equal(pack.info.approved, true);
+    assert.equal(pack.info.width, character.width);
+    assert.equal(pack.talk.stageFrames.length, character.mouthStages);
+    const poses = pack.speakingPoses?.frames || [pack.talk.stageFrames];
+    for (const pose of poses) {
+      const frames = pose.map(frame => hash(pack.decodeFrame(frame)));
+      assert.equal(new Set(frames).size, character.mouthStages,
+        character.name + ': duplicate mouth drawings in a speaking pose');
+    }
+    const output = join(root, 'build/mouth-checks', character.key);
+    mkdirSync(output, {recursive: true});
+    const speech = spawnSync(executable, ['--speech', path, String(character.width),
+      String(character.mouthStages), output], {encoding: 'utf8',
+      env: {...process.env, ASAN_OPTIONS: `detect_leaks=${process.platform === 'darwin' ? 0 : 1}:halt_on_error=1`}});
+    assert.equal(speech.status, 0, character.name + ': ' + speech.stdout + speech.stderr);
+    const mouthHash = stage => {
+      const ppm = readFileSync(join(output, `stage-${stage}.ppm`));
+      const header = Buffer.from(`P6\n${character.width} ${character.height}\n255\n`);
+      assert.deepEqual(ppm.subarray(0, header.length), header);
+      const [x, y, width, height] = character.reviewMouthRegion;
+      assert(x >= 0 && y >= 0 && x + width <= character.width && y + height <= character.height);
+      const rows = Array.from({length: height}, (_, row) => {
+        const start = header.length + ((y + row) * character.width + x) * 3;
+        return ppm.subarray(start, start + width * 3);
+      });
+      return hash(Buffer.concat(rows));
+    };
+    const rendered = Array.from({length: character.mouthStages}, (_, stage) => mouthHash(stage));
+    assert.equal(new Set(rendered).size, character.mouthStages,
+      character.name + ': audio levels did not produce distinct Muse mouth pixels');
+    assert.equal(mouthHash(character.mouthStages), mouthHash(0),
+      character.name + ': silence did not restore the closed mouth pixels');
+    console.log(character.name + ': ' + speech.stdout.trim());
+  }
 });
 
 test('prepare validates packs and stages the pinned SDK without changing source', () => {

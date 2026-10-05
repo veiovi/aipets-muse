@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "characters": [
+    {
+      "key": "pablo",
+      "file": "pablo.aipetframes",
+      "id": "pablo",
+      "name": "Pablo",
+      "version": "0.2.1",
+      "width": 240,
+      "height": 240,
+      "bytes": 2619352,
+      "sha256": "2226947c227ce3d038c3a6bc71b9f15d551d134b6c2986291137e92307b8b185",
+      "mouthStages": 8,
+      "sourceReviewSha256": "acd2cb32e402e2be116fc1d8243173c51e8b462613416b1c62d77673e63d2581",
+      "sourceReviewMode": "autonomous",
+      "sourceApproved": true,
+      "reviewMouthRegion": [
+        90,
+        112,
+        66,
+        75
+      ]
+    },
+    {
+      "key": "luna",
+      "file": "luna.aipetframes",
+      "id": "luna-sprite",
+      "name": "Luna",
+      "version": "1.3.1",
+      "width": 240,
+      "height": 240,
+      "bytes": 2529552,
+      "sha256": "069e17de778cdd6759b77c878d8fb3ad139f05c74a8892fc2d3cc43b9d264322",
+      "mouthStages": 7,
+      "sourceReviewSha256": "4baceecceef31fa546eb908d02f4ad09ecf9d34d1f26308d5cf4e829e2be606b",
+      "sourceReviewMode": "autonomous",
+      "sourceApproved": true,
+      "reviewMouthRegion": [
+        105,
+        135,
+        30,
+        30
+      ]
+    },
+    {
+      "key": "moss",
+      "file": "moss.aipetframes",
+      "id": "moss-sprite",
+      "name": "Moss",
+      "version": "1.3.0",
+      "width": 240,
+      "height": 240,
+      "bytes": 1542740,
+      "sha256": "2d877515c73b2e2348588b485c9e42ec2bff68076275c5504e4a799724ab4319",
+      "mouthStages": 8,
+      "sourceReviewSha256": "4d7a1a6b91b7f86a91863f9ba09d236aa690f36f14d5d70109427df81882f168",
+      "sourceReviewMode": "autonomous plus user acceptance of candidate",
+      "sourceApproved": true,
+      "reviewMouthRegion": [
+        104,
+        111,
+        32,
+        24
+      ]
+    },
+    {
+      "key": "angel",
+      "file": "angel.aipetframes",
+      "id": "angel",
+      "name": "Angel",
+      "version": "2.1.0",
+      "width": 240,
+      "height": 240,
+      "bytes": 2733184,
+      "sha256": "9196cd067e50b892d1f60d37694debb6b8fda01085684b88de6c9b2db1e82404",
+      "mouthStages": 7,
+      "sourceReviewSha256": "ba4adb7a431223ea0fb6fce4d94cd3fda1926f9dbfc92fcbd948a8888e1ff61f",
+      "sourceReviewMode": "autonomous plus user acceptance of candidate",
+      "sourceApproved": true,
+      "reviewMouthRegion": [
+        107,
+        145,
+        29,
+        28
+      ]
+    },
+    {
+      "key": "cyberpunk-shaman",
+      "file": "cyberpunk-shaman.aipetframes",
+      "id": "cyberpunk-shaman-sprite",
+      "name": "Cyberpunk Shaman",
+      "version": "0.1.0",
+      "width": 240,
+      "height": 240,
+      "bytes": 676884,
+      "sha256": "83ab39cb4edee1169d77b9c0f6e5bf8b95febef28c313351f5780868fe34b4bd",
+      "mouthStages": 8,
+      "sourceReviewSha256": "179d1d6722732adc1e4b7442625051ddc28f50570b3eda1f6e23ff0a181f115b",
+      "sourceReviewMode": "autonomous",
+      "sourceApproved": true,
+      "reviewMouthRegion": [
+        101,
+        128,
+        39,
+        29
+      ]
+    },
+    {
+      "key": "lavender-dragon",
+      "file": "lavender-dragon.aipetframes",
+      "id": "lavender-dragon",
+      "name": "Lavender Dragon",
+      "version": "0.1.0",
+      "width": 240,
+      "height": 240,
+      "bytes": 752464,
+      "sha256": "4fb3dd3519bdf6a88c3e253f54c1619ecd9321bebaf2558be869abcc60f52346",
+      "mouthStages": 8,
+      "sourceReviewSha256": "26a5b5b4fa767dad96661c5a6f66bfffbc48bb135b617eef0da2d2df8900cb11",
+      "sourceReviewMode": "autonomous",
+      "sourceApproved": true,
+      "reviewMouthRegion": [
+        100,
+        115,
+        41,
+        29
+      ]
+    }
+  ]
+}

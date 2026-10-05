@@ -27,7 +27,40 @@ audio level and touch/happiness. It is a native desktop preview, not a website.
 
 Preparation validates with the canonical C/WASM player, verifies pinned runtime
 sources, and produces an isolated SDK under `build/sdk/` with a SHA-256 receipt.
-The upstream submodule stays unchanged. Packs, firmware and credentials stay ignored.
+The upstream submodule stays unchanged. Generated firmware and credentials stay ignored.
+
+## Included characters
+
+The owner-authorized private library contains these unchanged, reviewed packs.
+The [catalog](characters/catalog.json) records exact versions, hashes, byte sizes
+and source-review hashes. These assets are private; the compiler's MIT license
+does not grant permission to redistribute character artwork.
+
+| Character | Version | Mouth stages, including closed |
+|---|---|---|
+| [Pablo](characters/pablo.aipetframes) | 0.2.1 | 8 |
+| [Luna](characters/luna.aipetframes) | 1.3.1 | 7 |
+| [Moss](characters/moss.aipetframes) | 1.3.0 | 8 |
+| [Angel](characters/angel.aipetframes) | 2.1.0 | 7 |
+| [Cyberpunk Shaman](characters/cyberpunk-shaman.aipetframes) | 0.1.0 | 8 |
+| [Lavender Dragon](characters/lavender-dragon.aipetframes) | 0.1.0 | 8 |
+
+All six are 240×240 core packs. Select one before building, for example:
+
+```sh
+npm run prepare:muse -- characters/pablo.aipetframes
+```
+
+This selects the pack for the next build; it does not add an on-device switcher.
+Older revisions of the same character are omitted. Pip-Loom's H3 release is
+not compatible with this pin: its smallest pack is 3,273,828 bytes, above the
+3,000,000-byte cap and 3 MiB partition, and needs newer speaking-motion support.
+
+The mouth check below is captured from the actual Muse C renderer. It tests all
+101 input levels and verifies distinct pixels inside each character's mouth
+region, then restores the exact closed mouth on silence. Source art is unchanged.
+
+![Actual Muse mouth stages and return to silence](characters/mouth-checks.png)
 
 ## Compatibility
 
