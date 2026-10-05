@@ -127,6 +127,19 @@ export function prepare(packPath, output = join(root, 'build/sdk'), board = 'wav
   patch('esp32/components/muse/muse_pixel.h', s => s + '\n/* Canonical player presentation revision, including all native pixels. */\nuint32_t muse_pixel_revision(void);\n');
   patch('esp32/components/muse/muse_ui.c', s => {
     s = replace(s, '#include "muse_pixel.h"', '#include "muse_pixel.h"\n#include "avatar/aipet_avatar.h"');
+    if (board === 'waveshare-s3-185b') {
+      s = replace(s, '    lv_display_t *disp = muse_board->display_start(&s_indev);', `    /* Native 240px pets fit inside the 360px round panel's ring. */
+    s_canvas_px = 240;
+    lv_display_t *disp = muse_board->display_start(&s_indev);`);
+      s = replace(s, '    /* The character. */', `    s_big_y = 0;
+
+    /* The character. */`);
+      s = replace(s, '    move_muse(l ? l->px : s_canvas_px, l ? l->y : s_big_y);', `    /* Spoken captions sit below the mouth over a readable dark band. */
+    bool pet_speech = which == ANSWER_HEARD;
+    lv_obj_set_style_bg_color(s_reply_lbl, lv_color_black(), 0);
+    lv_obj_set_style_bg_opa(s_reply_lbl, pet_speech ? LV_OPA_70 : LV_OPA_TRANSP, 0);
+    move_muse(l && !pet_speech ? l->px : s_canvas_px, l && !pet_speech ? l->y : s_big_y);`);
+    }
     s = replace(s, 'static void muse_image_init(void)\n{', `static void muse_image_init(void)
 {
     /* Bind on the UI thread before parallel LVGL strip readers can run. */
@@ -185,6 +198,18 @@ static void invalidate_muse(void)
 ` + s.slice(next);
     return s;
   });
+  if (board === 'waveshare-s3-185b') {
+    patch('esp32/simulator/src/sim_board.c', s => {
+      s = replace(s, '#define WATCHER_RESOLUTION 412', '#define WATCHER_RESOLUTION 360');
+      s = replace(s, '.name = "SenseCAP Watcher Simulator"', '.name = "Waveshare 1.85B Simulator"');
+      s = replace(s, '.talk_button = "wheel"', '.talk_button = "boot"');
+      s = replace(s, '    .aux_button = "scroll",\n', '');
+      return replace(s, '.talk_hint = { LV_ALIGN_CENTER, 100, -143 }',
+        '.talk_hint = { LV_ALIGN_BOTTOM_MID, 0, -12 }');
+    });
+    patch('esp32/simulator/tests/test_simulator.py', s =>
+      replace(s, 'WIDTH = HEIGHT = 412', 'WIDTH = HEIGHT = 360'));
+  }
   patch('esp32/simulator/CMakeLists.txt', s => {
     s = replace(s, '"${MUSE_COMPONENT_DIR}/../../avatar/muse_pixel.c"', '"${MUSE_COMPONENT_DIR}/avatar/muse_pixel.c"');
     return s + `
