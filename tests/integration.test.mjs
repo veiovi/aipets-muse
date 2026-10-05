@@ -9,6 +9,62 @@ import {prepare, root} from '../tools/prepare.mjs';
 import {writeFixtures} from './fixtures.mjs';
 import {parseFramePack} from '@aipet/frame-pack';
 
+test('ESP adapter requests an aligned player arena from the hardware allocator', () => {
+  const output = join(root, 'build/esp-allocator-test');
+  mkdirSync(join(output, 'psa'), {recursive: true});
+  const [, pack] = writeFixtures(output);
+  // Only the ESP hardware boundary is replaced; the adapter and player are real.
+  writeFileSync(join(output, 'esp_test_api.h'), `
+#pragma once
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#define MALLOC_CAP_SPIRAM 1u
+#define MALLOC_CAP_8BIT 2u
+#define ESP_OK 0
+#define ESP_PARTITION_TYPE_DATA 1
+#define ESP_PARTITION_MMAP_DATA 0
+#define PSA_SUCCESS 0
+#define PSA_ALG_SHA_256 1
+#define AIPET_PACK_BYTES 1u
+#define AIPET_PACK_SHA256 "unused"
+#define ESP_LOGE(tag, format, ...) fprintf(stderr, format "\\n", __VA_ARGS__)
+typedef uintptr_t esp_partition_mmap_handle_t;
+typedef struct { uint32_t address, size; } esp_partition_t;
+void *heap_caps_calloc(size_t n, size_t size, uint32_t caps);
+void *heap_caps_aligned_calloc(size_t alignment, size_t n, size_t size, uint32_t caps);
+void esp_test_free(void *pointer);
+const esp_partition_t *esp_partition_find_first(int type, int subtype, const char *label);
+int esp_partition_mmap(const esp_partition_t *part, size_t offset, size_t size,
+    int memory, const void **pointer, esp_partition_mmap_handle_t *handle);
+void esp_partition_munmap(esp_partition_mmap_handle_t handle);
+int psa_crypto_init(void);
+int psa_hash_compute(int algorithm, const uint8_t *input, size_t bytes,
+    uint8_t *hash, size_t capacity, size_t *written);
+`);
+  for (const file of ['aipet_pack_config.h', 'esp_heap_caps.h', 'esp_log.h',
+    'esp_partition.h', 'psa/crypto.h']) {
+    writeFileSync(join(output, file), '#include "esp_test_api.h"\n');
+  }
+  const runtime = join(root, 'node_modules/@aipet/frame-pack/source/firmware/components/frame_player');
+  const flags = ['-std=c11', '-O1', '-g', '-Wall', '-Wextra',
+    '-fsanitize=address,undefined', '-fno-omit-frame-pointer',
+    '-I', output, '-I', join(root, 'integration'),
+    '-I', join(root, 'upstream/muse/esp32/components/muse'), '-I', join(runtime, 'include')];
+  const object = join(output, 'muse_pixel.o');
+  execFileSync(process.env.CC || 'cc', [...flags, '-DESP_PLATFORM', '-Dfree=esp_test_free',
+    '-c', join(root, 'integration/muse_pixel.c'), '-o', object], {stdio: 'pipe'});
+  const executable = join(output, 'esp_allocator_test');
+  execFileSync(process.env.CC || 'cc', [...flags, join(root, 'tests/esp_allocator_test.c'), object,
+    ...['frame_player.c', 'frame_director.c', 'frame_actions.c', 'frame_display.c', 'frame_codec.c']
+      .map(file => join(runtime, 'src', file)),
+    join(runtime, 'vendor/miniz/miniz_tinfl.c'), '-lm', '-o', executable], {stdio: 'pipe'});
+  const result = spawnSync(executable, [pack], {encoding: 'utf8',
+    env: {...process.env, ASAN_OPTIONS: `detect_leaks=${process.platform === 'darwin' ? 0 : 1}:halt_on_error=1`}});
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  console.log(result.stdout.trim());
+});
+
 test('Muse adapter preserves canonical pixels, input semantics and timing', () => {
   const packs = writeFixtures(join(root, 'build/test-packs'));
   const runtime = join(root, 'node_modules/@aipet/frame-pack/source/firmware/components/frame_player');

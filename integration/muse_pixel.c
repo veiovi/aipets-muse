@@ -74,7 +74,7 @@ bool aipet_avatar_init(const void *pack, uint32_t bytes)
         return fail("missing pack or invalid pack length");
     }
 #ifdef ESP_PLATFORM
-    s_arena = heap_caps_calloc(1, fp_arena_size(), MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
+    s_arena = heap_caps_aligned_calloc(8, 1, fp_arena_size(), MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
 #else
     s_arena = calloc(1, fp_arena_size());
 #endif

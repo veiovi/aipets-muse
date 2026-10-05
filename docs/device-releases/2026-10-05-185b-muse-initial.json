@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-10-05T00:46:37Z",
+  "board": "waveshare-s3-185b",
+  "physicalMac": "28:84:85:b3:e6:58",
+  "sourceCommit": "35b06ca6d5f92aa8924c6ae41a96e112c248efc8",
+  "museCommit": "693cde9a884ad1edc87251b9f8944815f8de4809",
+  "compilerVersion": "0.3.0-sprite.3",
+  "pack": {
+    "file": "pet.aipetframes",
+    "sha256": "2226947c227ce3d038c3a6bc71b9f15d551d134b6c2986291137e92307b8b185",
+    "bytes": 2619352,
+    "id": "pablo",
+    "width": 240,
+    "height": 240
+  },
+  "sdkconfigSha256": "6f9d5792d952590cc93b5deccff6f8c9f1fe3bdd4a0243b5ad75088d87cc44c2",
+  "benchOverrides": [
+    {
+      "appliedTo": "ignored generated sdkconfig",
+      "text": "CONFIG_LV_USE_SNAPSHOT=y\n",
+      "sha256": "b1e76c45204e2e4891e19499b69520872dd78591f068ca9acdfd8fa88cdf3cbc",
+      "source": "upstream/muse/esp32/devices/sdkconfig.muse-bench"
+    }
+  ],
+  "sourceDisposition": {
+    "included": [
+      "35b06ca6d5f92aa8924c6ae41a96e112c248efc8"
+    ],
+    "previousAiPetsFirmware": "Replaced by the explicitly requested Muse experiment; retained in the full-device rollback image. No pending AI Pets source checkpoints imported."
+  },
+  "backups": {
+    "fullFlashManifest": "/Users/gausslabs/C0de/aipets-muse/build/verification/private-185b/full/esp32s3--dev-cu.usbmodem3101-25691005-074156/manifest.json",
+    "fullFlashSha256": "d79d918de76f6a3ca0a6674d4f8b125a9fd901979590a1f9ef2eee706adf6030",
+    "nvsManifest": "/Users/gausslabs/C0de/aipets-muse/build/verification/private-185b/settings/esp32s3--dev-cu.usbmodem3101-25691005-074638/manifest.json",
+    "nvsSha256": "72648c0a39628310889a2bd080a4dac45fc67da1d26eef2047ff877fa9007a4d"
+  },
+  "writtenRegions": [
+    {
+      "offset": "0x0",
+      "bytes": 22608,
+      "sha256": "ff8386c894b1a13a1af3f159c54e095aa219fc492a43eaaf3667843a18522fb7",
+      "readback_sha256": "ff8386c894b1a13a1af3f159c54e095aa219fc492a43eaaf3667843a18522fb7"
+    },
+    {
+      "offset": "0x10000",
+      "bytes": 3072,
+      "sha256": "19101cc04ad017cfb660311ba2a863f426583f20bf812635e632ce16bc8b0b11",
+      "readback_sha256": "19101cc04ad017cfb660311ba2a863f426583f20bf812635e632ce16bc8b0b11"
+    },
+    {
+      "offset": "0x11000",
+      "bytes": 49152,
+      "sha256": "9174c2b5bb5319915440bd558c07e83f2c102ec14f07cb5536c5b61bc4db8b48",
+      "readback_sha256": "9174c2b5bb5319915440bd558c07e83f2c102ec14f07cb5536c5b61bc4db8b48"
+    },
+    {
+      "offset": "0x1d000",
+      "bytes": 8192,
+      "sha256": "7d2c7ac4888bfd75cd5f56e8d61f69595121183afc81556c876732fd3782c62f",
+      "readback_sha256": "7d2c7ac4888bfd75cd5f56e8d61f69595121183afc81556c876732fd3782c62f"
+    },
+    {
+      "offset": "0x20000",
+      "bytes": 2166784,
+      "sha256": "f7d527f0a4d98ff87eaea418e47d0c791eb0fd8bf6c751a365600f6b895f0606",
+      "readback_sha256": "f7d527f0a4d98ff87eaea418e47d0c791eb0fd8bf6c751a365600f6b895f0606"
+    },
+    {
+      "offset": "0x830000",
+      "bytes": 2619352,
+      "sha256": "2226947c227ce3d038c3a6bc71b9f15d551d134b6c2986291137e92307b8b185",
+      "readback_sha256": "2226947c227ce3d038c3a6bc71b9f15d551d134b6c2986291137e92307b8b185"
+    }
+  ],
+  "settingsMigration": "Validated old aipet NVS CRCs; copied primary and alternate Wi-Fi strings into new homehub NVS at 0x11000/0xc000; round-trip verified. Original settings and identity remain in private rollback backups.",
+  "checks": {
+    "allReadbacksMatch": true,
+    "psramMiB": 8,
+    "panelRevision": 2,
+    "touchDriverRegistered": true,
+    "savedWifiConnected": true,
+    "audioCaptureHz": 16133,
+    "audioPlaybackHz": 16162,
+    "audioExpectedHz": 16000,
+    "builtInMp3Decoded": true,
+    "speakerToBothMicLoopback": "Measured 200-6000 Hz tones above noise floor on both channels.",
+    "avatar": "FAILED: canonical player rejected a 4-byte-aligned PSRAM arena; requires 8-byte alignment."
+  },
+  "outcome": "Booted Muse; avatar acceptance failed. Follow-up allocation fix required.",
+  "notVerified": [
+    "Physical screen color and touch gestures",
+    "Physical BOOT button",
+    "Muse SDK token/pairing",
+    "Live conversational TTS"
+  ],
+  "rollback": {
+    "offset": "0x0",
+    "bytes": 16777216,
+    "sha256": "d79d918de76f6a3ca0a6674d4f8b125a9fd901979590a1f9ef2eee706adf6030",
+    "manifest": "/Users/gausslabs/C0de/aipets-muse/build/verification/private-185b/full/esp32s3--dev-cu.usbmodem3101-25691005-074156/manifest.json"
+  },
+  "privateEvidenceDirectory": "/Users/gausslabs/C0de/aipets-muse/build/verification/private-185b/attempt-1",
+  "completionChime": false
+}
