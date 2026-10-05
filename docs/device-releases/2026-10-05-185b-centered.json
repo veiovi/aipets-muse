@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-10-05T01:22:26Z",
+  "board": "waveshare-s3-185b",
+  "physicalMac": "28:84:85:b3:e6:58",
+  "port": "/dev/cu.usbmodem101",
+  "sourceCommit": "ab336d990676b69242c70208ebdb761d5711db54",
+  "museCommit": "693cde9a884ad1edc87251b9f8944815f8de4809",
+  "compilerVersion": "0.3.0-sprite.3",
+  "pack": {
+    "file": "pet.aipetframes",
+    "sha256": "2226947c227ce3d038c3a6bc71b9f15d551d134b6c2986291137e92307b8b185",
+    "bytes": 2619352,
+    "id": "pablo",
+    "width": 240,
+    "height": 240
+  },
+  "sdkconfigSha256": "6f9d5792d952590cc93b5deccff6f8c9f1fe3bdd4a0243b5ad75088d87cc44c2",
+  "benchOverrides": [
+    {
+      "appliedTo": "ignored generated sdkconfig",
+      "text": "CONFIG_LV_USE_SNAPSHOT=y\n",
+      "sha256": "b1e76c45204e2e4891e19499b69520872dd78591f068ca9acdfd8fa88cdf3cbc",
+      "source": "upstream/muse/esp32/devices/sdkconfig.muse-bench"
+    }
+  ],
+  "buildSeconds": 50.75,
+  "priorAttempt": "2026-10-05-185b-muse-bench.json",
+  "writtenRegions": [
+    {
+      "offset": "0x20000",
+      "bytes": 2166784,
+      "sha256": "d5779866d0907d167298a83d26457f28fcbf60625a7e0fc9cbee3652bee7a382",
+      "readbackSha256": "d5779866d0907d167298a83d26457f28fcbf60625a7e0fc9cbee3652bee7a382"
+    }
+  ],
+  "settings": {
+    "backup": {
+      "path": "/Users/gausslabs/C0de/aipets-muse/build/verification/private-185b/attempt-3/muse-nvs-before-app.bin",
+      "offset": "0x11000",
+      "bytes": 49152,
+      "sha256": "9b674ca3e329ac41da4341424671da1b1abc950d7f28f3754b3468b3239f17f5"
+    },
+    "byteIdenticalAfterAppWrite": true,
+    "savedWifiConnectedAfterReboot": true
+  },
+  "layout": {
+    "screen": [
+      360,
+      360
+    ],
+    "avatarSize": [
+      240,
+      240
+    ],
+    "center": [
+      180,
+      180
+    ],
+    "idleAndSpokenReplySameSize": true,
+    "spokenCaptions": "Dark band below the mouth; text-only reply layout retained."
+  },
+  "checks": {
+    "boot": "No avatar error, panic, watchdog or abort in captured boot and benchmark.",
+    "bootReportedAvatarPixels": 240,
+    "audioCaptureHz": 16133,
+    "audioPlaybackHz": 16162,
+    "expectedAudioHz": 16000,
+    "mouth": {
+      "mouthRoi": [
+        150,
+        172,
+        66,
+        75
+      ],
+      "speechRoiSha256": [
+        "a6e7cc2fecb9739a664145e4ac84a151d765fbf57db5765114505c71b29d6578",
+        "8cfbc14690203a85ae90b1f9c1ecacef8ec6662366ceeef96e825992ad3250e6",
+        "cfb26f38240dbd764a99e524b434c6ac6849d2c79913e988f243d65c5d2ee947"
+      ],
+      "distinctSpeechRois": 3,
+      "closedRoiSha256": [
+        "d15bc12153a4e1590456973caf1c17579f2b6baba505b01b05f5eba8c30bce02",
+        "d15bc12153a4e1590456973caf1c17579f2b6baba505b01b05f5eba8c30bce02"
+      ],
+      "closedRoiEqual": true
+    },
+    "visualReview": "Device snapshots confirm centered 240px Pablo at idle, during actual decoded MP3 speech, and after silence. Mouth visibly varies and returns closed.",
+    "simulator": "Production UI idle, speech, spoken caption and text-only snapshots reviewed at360x360; existing simulator suite1/1 passed in2.00 seconds.",
+    "prepare": "Affected prepare/board tests2/2 passed in0.52 seconds.",
+    "ci": "PR6 host-validation passed for push and pull_request, including all four host tests and headless simulator.",
+    "reusedEvidence": {
+      "receipt": "2026-10-05-185b-muse-bench.json",
+      "scope": "Stereo acoustic loopback; audio, codec and board code/dependencies/configuration are unchanged."
+    }
+  },
+  "proof": {
+    "file": "185b-centered-mouth-proof.png",
+    "sha256": "9f994818ba847ff9205c5c1ca3fc986169d98cc9496b3e8c7f7917e819a2dad9",
+    "kind": "Device LVGL framebuffer snapshots."
+  },
+  "pending": [
+    "Human confirmation of physical touch/swipe and BOOT",
+    "Muse SDK token/account pairing",
+    "Live microphone-to-service-to-TTS conversation"
+  ],
+  "outcome": "Requested centered/larger layout flashed and local speech mouth reverified. Service and physical-control acceptance remain separate.",
+  "completionChime": false,
+  "privateEvidenceDirectory": "/Users/gausslabs/C0de/aipets-muse/build/verification/private-185b/attempt-3",
+  "localArtifactDirectory": "/Users/gausslabs/C0de/aipets-muse/build/verification/candidate-ab336d9"
+}

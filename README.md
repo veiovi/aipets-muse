@@ -118,12 +118,13 @@ pixels as before speech. The speaker-to-microphone tone sweep also passed on bot
 microphone channels. An ESP PSRAM alignment issue found on the device is fixed and
 covered by a regression test.
 
-![Pablo before, during and after speech on the 1.85B](docs/device-releases/185b-mouth-proof.png)
+![Centered Pablo before, during and after speech on the 1.85B](docs/device-releases/185b-centered-mouth-proof.png)
 
 These are device framebuffer captures. Physical LCD colors, touch/swipe and BOOT
 still need a human check. Account pairing and live conversational TTS remain
 unverified; the built-in speech sample needs neither. See the immutable
-[bench receipt](docs/device-releases/2026-10-05-185b-muse-bench.json) and
+[centered-layout receipt](docs/device-releases/2026-10-05-185b-centered.json),
+[earlier speech bench receipt](docs/device-releases/2026-10-05-185b-muse-bench.json) and
 [initial migration receipt](docs/device-releases/2026-10-05-185b-muse-initial.json).
 
 ## Verify
