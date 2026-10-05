@@ -86,9 +86,9 @@
       "closedRoiEqual": true
     },
     "visualReview": "Device snapshots confirm centered 240px Pablo at idle, during actual decoded MP3 speech, and after silence. Mouth visibly varies and returns closed.",
-    "simulator": "Production UI idle, speech, spoken caption and text-only snapshots reviewed at360x360; existing simulator suite1/1 passed in2.00 seconds.",
-    "prepare": "Affected prepare/board tests2/2 passed in0.52 seconds.",
-    "ci": "PR6 host-validation passed for push and pull_request, including all four host tests and headless simulator.",
+    "simulator": "Production UI idle, speech, spoken caption and text-only snapshots reviewed at 360x360; existing simulator suite 1/1 passed in 2.00 seconds.",
+    "prepare": "Affected prepare/board tests 2/2 passed in 0.52 seconds.",
+    "ci": "PR 6 host-validation passed for push and pull_request, including all four host tests and headless simulator.",
     "reusedEvidence": {
       "receipt": "2026-10-05-185b-muse-bench.json",
       "scope": "Stereo acoustic loopback; audio, codec and board code/dependencies/configuration are unchanged."
