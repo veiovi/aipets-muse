@@ -15,7 +15,9 @@ Do not create another cloud, player, compiler or art generator.
   `npm run build:firmware`. Generated files stay under ignored `build/`.
 - Test adapter/tool changes with `npm test`. UI changes also need simulator build
   and `AIPET_PACK=/absolute/path/PACK ctest --test-dir build/simulator --output-on-failure`.
-  Firmware integration also needs the Waveshare1.75C build. Test behavior through
+  Firmware integration needs the affected board build; shared changes also need
+  Waveshare1.75C. Select 1.85B with `prepare:muse -- PACK --board waveshare-s3-185b`.
+  Its build/configuration lives in `build/firmware-185b`. Test behavior through
   the real module, not source-text matching.
 - The owner authorized the reviewed packs in `characters/` for this private
   repository. Keep their hashes, versions and review provenance in

@@ -93,3 +93,22 @@ test('prepare validates packs and stages the pinned SDK without changing source'
   assert.throws(() => prepare(packs[0], parent), /not this pinned generated SDK/);
   assert.equal(execFileSync('git', ['-C', join(root, 'upstream/muse'), 'status', '--porcelain']).length, 0);
 });
+
+test('board selection preserves pack bytes and chooses the matching pinned dependencies', () => {
+  const parent = mkdtempSync(join(tmpdir(), 'aipets-muse-boards-'));
+  const [pack] = writeFixtures(parent);
+  const output = join(parent, 'sdk');
+  for (const [board, flashMiB, lock] of [
+    ['waveshare-s3-185b', 16, 'muse-dependencies-185b.lock'],
+    ['waveshare-s3-175c', 32, 'muse-dependencies.lock'],
+  ]) {
+    const receipt = prepare(pack, output, board);
+    assert.equal(receipt.board, board);
+    assert.equal(receipt.flashMiB, flashMiB);
+    assert.ok(Number(receipt.partition.offset) + receipt.partition.bytes <= flashMiB * 1024 * 1024);
+    assert.deepEqual(readFileSync(join(output, 'pet.aipetframes')), readFileSync(pack));
+    assert.deepEqual(readFileSync(join(output, 'esp32/dependencies.lock')), readFileSync(join(root, 'vendor', lock)));
+    assert.equal(receipt.hardwareVerified, false);
+  }
+  assert.throws(() => prepare(pack, output, 'waveshare-s3-185'), /Unsupported board/);
+});

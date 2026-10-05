@@ -66,6 +66,29 @@ and partition, with `hardwareVerified: false`. Keep it with generated firmware
 and review before any authorized write. Existing AI Pets firmware has a different
 layout; unchanged Muse offsets do not imply safe migration.
 
+The optional `waveshare-s3-185b` target uses one native Muse board module with
+ST77916 display, CST816S touch, ES8311 speaker, ES7210 microphones and GPIO0 BOOT.
+Pins and two display-revision command tables come from Waveshare's
+[`139e6db` BSP](https://github.com/waveshareteam/ESP32-S3-Touch-LCD-1.85B/tree/139e6db584f3737fcfc6a958ee83b79fb69d317c/Examples/ESP-IDF-V5.5.3/01_comprehensive_example/components/waveshare__esp32_s3_touch_lcd_1_85B).
+The tables retain their Apache-2.0 license; the vendor LVGL/sensor/storage stack
+is not imported. Unknown panel IDs stop initialization. The existing Muse DMA
+band path uses two 5,760-byte internal buffers and 90-line PSRAM drawing bands.
+Touch orientation matches the vendor's zero rotation/mirror defaults.
+
+PWR controls an independent hardware latch. There is no AXP2101 and GPIO3 is
+LCD reset, so the 1.75C PMU/button operations must never run on 1.85B. Software
+power-off returns unsupported; battery telemetry and deep-sleep optimization
+are not implemented. Initial physical acceptance must check panel revision,
+orientation, brightness, BOOT pairing, both microphone channels and playback.
+The 1.85B dependency lock is separate and its final partition ends at `0xB30000`,
+within 16 MiB flash. Migrating from AI Pets still needs a full backup.
+
+The existing serial `m` bench command wakes the display and plays Muse's embedded
+MP3 through its real reply decoder and audio output. Its decoded PCM now drives
+speaking mode and mouth amplitude, followed by closed-mouth idle; failed decoding
+does not enter speaking. This path requires the existing `CONFIG_MUSE_HATCH=y`
+voice session (default with PSRAM). It tests local playback, not provider TTS.
+
 ## Verification
 
 Host ASan/UBSan tests use real C and 120px raw / 240px zlib diagnostic packs:

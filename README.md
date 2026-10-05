@@ -69,8 +69,9 @@ region, then restores the exact closed mouth on silence. Source art is unchanged
   layered effects, idle motion and touch use the existing player unchanged.
 - Compatible core packs from `fal-h3-aipet` use the same file contract; its
   authoring tools are not bundled. Standalone move packs cannot replace a core pet.
-- Firmware target: **Waveshare ESP32-S3-Touch-AMOLED-1.75C**, 32 MB flash and
-  8 MB PSRAM. Other boards need separate memory/layout/build verification.
+- Firmware targets: **Waveshare ESP32-S3-Touch-AMOLED-1.75C** (default, 32 MB flash)
+  and **Waveshare ESP32-S3-Touch-LCD-1.85B** (16 MB flash), both with 8 MB PSRAM.
+  Other boards need separate memory/layout/build verification.
 - Muse's 40 ms refresh feeds fixed 33 ms player ticks. Native pixels are scaled
   into RGB565 strips without a 64×64 intermediate.
 
@@ -82,6 +83,19 @@ without opening a device. The pack occupies a separate 3 MiB data partition at
 checks exact length, SHA-256 and canonical validation. The generated flash target
 includes both firmware and matching pack. Upstream OTA is disabled to prevent
 it replacing the custom renderer.
+
+For the 1.85B, select the exact board during preparation:
+
+```sh
+npm run prepare:muse -- /absolute/path/to/pet.aipetframes --board waveshare-s3-185b
+npm run build:firmware
+```
+
+Build and `configure:firmware` use the prepared board: `build/firmware-185b/`
+for 1.85B, `build/firmware/` for 1.75C. Settings are separate. The 1.85B uses
+BOOT for talk/pairing and the touchscreen for settings. PWR remains the physical
+power switch; software power-off and battery telemetry are unavailable. This
+port requires physical display, touch and audio acceptance before release.
 
 Building is not permission to flash. Migrating an existing AI Pets device to
 Muse changes its firmware and partition layout: follow the release workflow,
