@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-10-05T01:01:47Z",
+  "board": "waveshare-s3-185b",
+  "physicalMac": "28:84:85:b3:e6:58",
+  "sourceCommit": "d21032ec9295443f5a9762a25b1095a2de884474",
+  "museCommit": "693cde9a884ad1edc87251b9f8944815f8de4809",
+  "compilerVersion": "0.3.0-sprite.3",
+  "pack": {
+    "file": "pet.aipetframes",
+    "sha256": "2226947c227ce3d038c3a6bc71b9f15d551d134b6c2986291137e92307b8b185",
+    "bytes": 2619352,
+    "id": "pablo",
+    "width": 240,
+    "height": 240
+  },
+  "sdkconfigSha256": "6f9d5792d952590cc93b5deccff6f8c9f1fe3bdd4a0243b5ad75088d87cc44c2",
+  "benchOverrides": [
+    {
+      "appliedTo": "ignored generated sdkconfig",
+      "text": "CONFIG_LV_USE_SNAPSHOT=y\n",
+      "sha256": "b1e76c45204e2e4891e19499b69520872dd78591f068ca9acdfd8fa88cdf3cbc",
+      "source": "upstream/muse/esp32/devices/sdkconfig.muse-bench"
+    }
+  ],
+  "buildSeconds": 44.92,
+  "priorAttempt": "2026-10-05-185b-muse-initial.json",
+  "writtenRegions": [
+    {
+      "offset": "0x20000",
+      "bytes": 2166784,
+      "sha256": "08c09aacfc0bae8585a9adfa92ffc03d40850c6737515d8caca1cee46d6d31cf",
+      "readbackSha256": "08c09aacfc0bae8585a9adfa92ffc03d40850c6737515d8caca1cee46d6d31cf"
+    }
+  ],
+  "settings": {
+    "backup": {
+      "path": "/Users/gausslabs/C0de/aipets-muse/build/verification/private-185b/attempt-2/muse-nvs-before-app.bin",
+      "offset": "0x11000",
+      "bytes": 49152,
+      "sha256": "9b674ca3e329ac41da4341424671da1b1abc950d7f28f3754b3468b3239f17f5"
+    },
+    "byteIdenticalAfterAppWrite": true,
+    "savedWifiConnectedAfterReboot": true
+  },
+  "checks": {
+    "boot": "No avatar initialization error, panic, watchdog or abort in captured startup and benchmark.",
+    "psramMiB": 8,
+    "panelRevision": 2,
+    "touchDriverRegistered": true,
+    "audioCaptureHz": 16133,
+    "audioPlaybackHz": 16162,
+    "expectedAudioHz": 16000,
+    "mouth": {
+      "input": "Actual decoded built-in Muse MP3 through muse_audio_write and muse_state_set_level",
+      "decodedSamples": 58752,
+      "sampleRate": 16000,
+      "repetitions": 3,
+      "speechRoi": [
+        164,
+        142,
+        37,
+        42
+      ],
+      "speechRoiSha256": [
+        "2aea00abae7f428da6ae8a6f6ad1d25d3388ad59da24f9c778bef19f9e7c9147",
+        "8e32ce62673febb900097f0993cf4306f850a60036894db5c5724314ac74bc7a",
+        "1d061eec151d3d51b4554ce59a140a6fb5f838463ebd51bab07b5a276f530ea2"
+      ],
+      "distinctSpeechRois": 3,
+      "closedRoi": [
+        156,
+        140,
+        53,
+        60
+      ],
+      "closedRoiSha256": [
+        "3c012def188be7ce3572b6e388b928d07d431693855d2710f5c56418072afc3f",
+        "3c012def188be7ce3572b6e388b928d07d431693855d2710f5c56418072afc3f"
+      ],
+      "closedRoiEqual": true,
+      "visualReview": "Pablo visible; open mouth varies during playback and closes after playback. Verified three device mouth crops differ and before/after closed-mouth crops are byte-identical."
+    },
+    "audioLoopback": "Speaker tone sweep 200-6000 Hz detected by both microphones for gains 0,6,12,18,24,30 dB; no audio errors in capture.",
+    "host": "All four tests passed including deliberately misaligned ESP allocator regression, all six character mouth banks, input mapping, timing and strip parity (52.97 seconds).",
+    "ci": "PR4 host-validation passed for push and pull_request; includes headless simulator build/test.",
+    "otherBoard": "Waveshare1.75C shared-fix build passed on95fb9e5 in53.24 seconds; identical adapter source to flashedmain."
+  },
+  "proof": {
+    "file": "185b-mouth-proof.png",
+    "sha256": "db78fddb427565af8205372af944b589938ee48fd54f2deeeb391e9f00e279d1",
+    "kind": "Device LVGL framebuffer snapshots, not a camera photograph."
+  },
+  "userPhysicalCheck": "Not yet confirmed: LCD colors, physical touch/swipe and BOOT button.",
+  "pending": [
+    "Muse SDK token and account pairing",
+    "Live microphone-to-service-to-TTS conversation"
+  ],
+  "outcome": "Muse and Pablo flashed; local speech mouth and audio bench verified. Full product acceptance remains pending physical controls and service setup.",
+  "completionChime": false,
+  "privateEvidenceDirectory": "/Users/gausslabs/C0de/aipets-muse/build/verification/private-185b/attempt-2",
+  "localArtifactDirectory": "/Users/gausslabs/C0de/aipets-muse/build/verification/candidate-d21032e"
+}

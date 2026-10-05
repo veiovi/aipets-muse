@@ -107,6 +107,23 @@ build configuration through `npm run configure:firmware`; simulator and compile-
 checks need none. Muse currently returns **text replies**; spoken replies need
 TTS integration. Actual playback audio levels already drive our mouth stages.
 
+### 1.85B speech bench verification
+
+Pablo has been flashed onto the 1.85B with verified flash readbacks and preserved
+Wi-Fi settings. The actual Muse MP3 decoder/playback path produced three distinct
+mouth shapes; after playback, the mouth region returned to exactly the same closed
+pixels as before speech. The speaker-to-microphone tone sweep also passed on both
+microphone channels. An ESP PSRAM alignment issue found on the device is fixed and
+covered by a regression test.
+
+![Pablo before, during and after speech on the 1.85B](docs/device-releases/185b-mouth-proof.png)
+
+These are device framebuffer captures. Physical LCD colors, touch/swipe and BOOT
+still need a human check. Account pairing and live conversational TTS remain
+unverified; the built-in speech sample needs neither. See the immutable
+[bench receipt](docs/device-releases/2026-10-05-185b-muse-bench.json) and
+[initial migration receipt](docs/device-releases/2026-10-05-185b-muse-initial.json).
+
 ## Verify
 
 ```sh
