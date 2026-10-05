@@ -92,7 +92,9 @@ npm run build:firmware
 ```
 
 Build and `configure:firmware` use the prepared board: `build/firmware-185b/`
-for 1.85B, `build/firmware/` for 1.75C. Settings are separate. The 1.85B uses
+for 1.85B, `build/firmware/` for 1.75C. Settings are separate. The 1.85B centers
+the pet at 240×240 pixels and keeps that size during spoken replies, with captions
+on a dark band below the mouth. Its simulator uses the same 360×360 screen. The 1.85B uses
 BOOT for talk/pairing and the touchscreen for settings. PWR remains the physical
 power switch; software power-off and battery telemetry are unavailable. This
 port requires physical display, touch and audio acceptance before release.
