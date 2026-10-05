@@ -1,9 +1,13 @@
 # AI Pets for Muse
 
-Private integration of our `.aipetframes` packages into the
+Bring portable AI Pets `.aipetframes` animation packages into the
 [Muse ESP32 SDK](https://github.com/facebookincubator/muse-gadget-sdk/tree/main/esp32).
-Codex's **sprite-aipets** skill remains the authoring workflow. Muse supplies
+The [**sprite-aipets** Codex skill](https://github.com/veiovi/aipets-sprite-skill) remains the authoring workflow. Muse supplies
 its device UI and connection; our canonical C player supplies the animated pet.
+
+**Developer preview:** six included characters, a native simulator, and firmware
+targets for Waveshare 1.75C and 1.85B. Local playback-driven mouths are verified
+on 1.85B; Muse account pairing and live conversational TTS remain unverified.
 
 ## Use a pack
 
@@ -31,10 +35,10 @@ The upstream submodule stays unchanged. Generated firmware and credentials stay 
 
 ## Included characters
 
-The owner-authorized private library contains these unchanged, reviewed packs.
+The owner-authorized public library contains these unchanged, reviewed packs.
 The [catalog](characters/catalog.json) records exact versions, hashes, byte sizes
-and source-review hashes. These assets are private; the compiler's MIT license
-does not grant permission to redistribute character artwork.
+and source-review hashes. Character artwork has [separate terms](characters/RIGHTS.md);
+the code's MIT license does not license the artwork.
 
 | Character | Version | Mouth stages, including closed |
 |---|---|---|
@@ -144,6 +148,10 @@ See [integration details](docs/README.md).
 
 ## Source and service terms
 
+Our adapter, tools, tests and documentation are [MIT-licensed](LICENSE).
+The included character artwork and its image captures retain separate rights;
+see [character terms](characters/RIGHTS.md). Third-party source keeps its own licenses.
+
 Muse source is Apache-2.0; its default Jollybot artwork is excluded from that
 license and is not our avatar. The compiler/runtime archive is the MIT-licensed
 `sprite-aipets` distribution; miniz notices remain inside it. See
@@ -152,5 +160,6 @@ license and is not our avatar. The compiler/runtime archive is the MIT-licensed
 
 Muse service access separately follows its
 [SDK token terms](https://gadgets.muse.ai/sdk-terms), including personal,
-non-commercial use and restricted device distribution. A private repository
-does not change those service terms.
+non-commercial use and restricted device distribution. Public source availability
+does not change those service terms. This is an independent integration, not a
+Meta-endorsed device, and includes no Muse service credentials.

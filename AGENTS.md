@@ -1,6 +1,6 @@
 # AI Pets for Muse
 
-This private repository adapts existing animation packages to pinned Muse
+This public repository adapts existing animation packages to pinned Muse
 firmware. Keep scope to the adapter, reproducible preparation and tests.
 Do not create another cloud, player, compiler or art generator.
 
@@ -19,14 +19,14 @@ Do not create another cloud, player, compiler or art generator.
   Waveshare1.75C. Select 1.85B with `prepare:muse -- PACK --board waveshare-s3-185b`.
   Its build/configuration lives in `build/firmware-185b`. Test behavior through
   the real module, not source-text matching.
-- The owner authorized the reviewed packs in `characters/` for this private
+- The owner authorized the reviewed packs in `characters/` for this public
   repository. Keep their hashes, versions and review provenance in
   `characters/catalog.json`; test every included pack's actual mouth pixels.
-  Do not publish these assets or import unrelated private artwork.
+  Preserve `characters/RIGHTS.md` and do not import unrelated private artwork.
 - Never commit credentials, generated sdkconfig or firmware.
   No tool here flashes automatically. Hardware access needs explicit scope and
   the canonical AI Pets release lease, backup and acceptance workflow.
-- Preserve licenses and repository privacy. Muse token terms are separate from
+- Preserve code and artwork licenses. Muse token terms are separate from
   source licensing. Read README and docs/README.md for limitations.
 - Follow global project lifecycle: isolated codex branch, reviewed PR, squash
   into main. Preserve useful local verification files before cleanup.
