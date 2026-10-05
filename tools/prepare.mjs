@@ -13,6 +13,10 @@ const compilerHash = '51b2b42b16b929c8ee60b355774751b6a47e77152f5591f1bf2bce8bbe
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
 const read = path => readFileSync(path, 'utf8');
 const git = (...args) => execFileSync('git', ['-C', upstream, ...args], {maxBuffer: 64 * 1024 * 1024});
+export const boards = {
+  'waveshare-s3-175c': {lock: 'muse-dependencies.lock', flashMiB: 32, build: 'firmware'},
+  'waveshare-s3-185b': {lock: 'muse-dependencies-185b.lock', flashMiB: 16, build: 'firmware-185b'},
+};
 
 function replace(source, before, after) {
   if (!source.includes(before) || source.indexOf(before) !== source.lastIndexOf(before)) {
@@ -21,7 +25,9 @@ function replace(source, before, after) {
   return source.replace(before, after);
 }
 
-export function prepare(packPath, output = join(root, 'build/sdk')) {
+export function prepare(packPath, output = join(root, 'build/sdk'), board = 'waveshare-s3-175c') {
+  if (!Object.hasOwn(boards, board)) throw Error(`Unsupported board: ${board}`);
+  const target = boards[board];
   const bytes = readFileSync(packPath);
   if (bytes.length > 3_000_000) throw Error('Pack exceeds the 3,000,000-byte skill limit');
   const pack = parseFramePack(bytes);
@@ -50,7 +56,7 @@ export function prepare(packPath, output = join(root, 'build/sdk')) {
     writeFileSync(marker, sdkCommit + '\n');
   }
   const esp = join(output, 'esp32');
-  cpSync(join(root, 'vendor/muse-dependencies.lock'), join(esp, 'dependencies.lock'));
+  cpSync(join(root, 'vendor', target.lock), join(esp, 'dependencies.lock'));
   function patch(path, transform) {
     writeFileSync(join(output, path), transform(git('show', `${sdkCommit}:${path}`).toString()));
   }
@@ -69,7 +75,55 @@ export function prepare(packPath, output = join(root, 'build/sdk')) {
 `);
   writeFileSync(join(output, 'pet.aipetframes'), bytes);
 
-  patch('esp32/components/muse/CMakeLists.txt', s => replace(s, 'noise_core minimp3', 'noise_core minimp3 frame_player esp_partition'));
+  patch('esp32/components/muse/CMakeLists.txt', s => {
+    s = replace(s, 'noise_core minimp3', 'noise_core minimp3 frame_player esp_partition');
+    return replace(s, '    elseif(CONFIG_MUSE_BOARD_AIPI)', `    elseif(CONFIG_MUSE_BOARD_WAVESHARE_S3_185B)
+        list(APPEND srcs "boards/board_waveshare_s3_185b.c" "boards/muse_lcd_bands.c")
+    elseif(CONFIG_MUSE_BOARD_AIPI)`);
+  });
+  patch('esp32/components/muse/Kconfig', s => {
+    s = replace(s, '        config MUSE_BOARD_AIPI', `        config MUSE_BOARD_WAVESHARE_S3_185B
+            bool "Waveshare ESP32-S3-Touch-LCD-1.85B"
+            depends on IDF_TARGET_ESP32S3
+
+        config MUSE_BOARD_AIPI`);
+    return replace(s, '        default "none"', '        default "waveshare_s3_185b" if MUSE_BOARD_WAVESHARE_S3_185B\n        default "none"');
+  });
+  patch('esp32/components/muse/idf_component.yml', s => {
+    // Keep the original 1.75C manifest byte-for-byte, including its dependency lock.
+    if (board !== 'waveshare-s3-185b') return s;
+    s = replace(s, 'in [\\"waveshare_s3_175c\\",', 'in [\\"waveshare_s3_185b\\", \\"waveshare_s3_175c\\",');
+    return s + `
+  espressif/esp_lcd_st77916: "2.0.2"
+  espressif/esp_lcd_touch_cst816s: "1.1.2"
+`;
+  });
+  cpSync(join(root, 'integration/board_waveshare_s3_185b.c'), join(esp, 'components/muse/boards/board_waveshare_s3_185b.c'));
+  cpSync(join(root, 'vendor/waveshare_185b_panel_init.h'), join(esp, 'components/muse/boards/waveshare_185b_panel_init.h'));
+  cpSync(join(root, 'vendor/LICENSE.waveshare'), join(esp, 'components/muse/boards/LICENSE.waveshare'));
+  const overlay = git('show', `${sdkCommit}:esp32/devices/sdkconfig.muse-waveshare-s3-175c`).toString()
+    .replaceAll('AMOLED-1.75C', 'LCD-1.85B').replaceAll('32 MB', '16 MB')
+    .replaceAll('WAVESHARE_S3_175C', 'WAVESHARE_S3_185B').replaceAll('32MB', '16MB');
+  writeFileSync(join(esp, 'devices/sdkconfig.muse-waveshare-s3-185b'), overlay);
+  patch('esp32/components/muse/muse_voice.c', s => replace(s, `                for (size_t i = 0; i < n; i += MUSE_AUDIO_CHUNK) {
+                    muse_audio_write(pcm + i, n - i < MUSE_AUDIO_CHUNK ? n - i : MUSE_AUDIO_CHUNK);
+                }
+                free(pcm);`, `                if (n) {
+                    muse_state_set_mode(MUSE_MODE_SPEAKING);
+                }
+                for (size_t i = 0; i < n; i += MUSE_AUDIO_CHUNK) {
+                    size_t chunk = n - i < MUSE_AUDIO_CHUNK ? n - i : MUSE_AUDIO_CHUNK;
+                    muse_state_set_level(muse_audio_level(pcm + i, chunk));
+                    muse_audio_write(pcm + i, chunk);
+                }
+                muse_state_set_level(0);
+                go_idle("");
+                free(pcm);`));
+  patch('esp32/components/muse/muse_input.c', s => replace(s, `        if (c == 'm') {
+            muse_voice_request_mp3test();`, `        if (c == 'm') {
+            muse_state_poke();
+            set_asleep(false, "MP3 bench");
+            muse_voice_request_mp3test();`));
   patch('esp32/components/muse/muse_pixel.h', s => s + '\n/* Canonical player presentation revision, including all native pixels. */\nuint32_t muse_pixel_revision(void);\n');
   patch('esp32/components/muse/muse_ui.c', s => {
     s = replace(s, '#include "muse_pixel.h"', '#include "muse_pixel.h"\n#include "avatar/aipet_avatar.h"');
@@ -145,23 +199,29 @@ target_include_directories(muse_simulator PRIVATE "\${FRAME_PLAYER}/include")
   patch('esp32/partitions_muse.csv', s => s + '\n# Immutable core pack, separate from both application OTA slots.\naipet, data, 0x42, 0x830000, 0x300000,\n');
   patch('esp32/CMakeLists.txt', s => s + `
 if(CONFIG_HOMEHUB_OTA_ENABLED)
-    message(FATAL_ERROR "AI Pets requires Muse OTA disabled. Set CONFIG_HOMEHUB_OTA_ENABLED=n in build/firmware/sdkconfig and rebuild.")
+    message(FATAL_ERROR "AI Pets requires Muse OTA disabled. Set CONFIG_HOMEHUB_OTA_ENABLED=n in the active build sdkconfig and rebuild.")
+endif()
+if(NOT CONFIG_MUSE_BOARD_ID STREQUAL "${board.replaceAll('-', '_')}" OR
+   NOT CONFIG_ESPTOOLPY_FLASHSIZE STREQUAL "${target.flashMiB}MB")
+    message(FATAL_ERROR "Prepared pack requires ${board} with ${target.flashMiB}MB flash; use its matching build configuration.")
 endif()
 esptool_py_flash_to_partition(flash "aipet" "\${CMAKE_CURRENT_LIST_DIR}/../pet.aipetframes")
 `);
   writeFileSync(join(esp, 'sdkconfig.aipets'), '# Keep the custom renderer: upstream OTA would replace it.\nCONFIG_HOMEHUB_OTA_ENABLED=n\n');
   const receipt = {museCommit: sdkCommit, compilerVersion: provenance.version, compilerCommit: provenance.commit,
     compilerSha256: compilerHash,
-    firmwareDependenciesSha256: sha(readFileSync(join(root, 'vendor/muse-dependencies.lock'))),
+    firmwareDependenciesSha256: sha(readFileSync(join(root, 'vendor', target.lock))),
     pack: {file: 'pet.aipetframes', sha256: sha(bytes), bytes: bytes.length,
       id: pack.info.id, width: pack.info.width, height: pack.info.height},
-    board: 'waveshare-s3-175c', partition: {name: 'aipet', offset: '0x830000', bytes: 0x300000},
+    board, flashMiB: target.flashMiB, partition: {name: 'aipet', offset: '0x830000', bytes: 0x300000},
     hardwareVerified: false};
   writeFileSync(join(output, 'receipt.json'), JSON.stringify(receipt, null, 2) + '\n');
   return receipt;
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  if (process.argv.length !== 3) throw Error('Usage: npm run prepare:muse -- /path/to/pet.aipetframes');
-  console.log(JSON.stringify(prepare(resolve(process.argv[2])), null, 2));
+  if (process.argv.length !== 3 && !(process.argv.length === 5 && process.argv[3] === '--board')) {
+    throw Error('Usage: npm run prepare:muse -- /path/to/pet.aipetframes [--board waveshare-s3-185b]');
+  }
+  console.log(JSON.stringify(prepare(resolve(process.argv[2]), undefined, process.argv[4]), null, 2));
 }
